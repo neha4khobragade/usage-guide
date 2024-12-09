@@ -1,0 +1,56 @@
+*Larvel usage instructions
+* Required Laravel prerequisites with their latest versions are installed here:
+1) To verify the installed version of composer
+   composer --version
+
+2) To verify the installed version of php
+   php -v
+
+3) To verify the installed version of apache2
+   apache2 -v
+
+4) To verify the installed version of mysql
+   mysql --version
+
+* Here we have installed Laravel with composer using create-project command in the path of Apache default root directory /var/www/html. For demo purpose we have created >
+1. go into the require path,
+        cd /var/www/html
+2. Now, install Laravel using the composer command, type,
+        sudo composer create-project laravel/laravel laravelapp
+note:here laravelapp is a demo  project we have created. The command creates a new directory called laravelapp and installs all the files and directories for Laravel.
+3. Change the ownership of the Laravel directory to the webserver user and also the permissions:
+        sudo chown -R www-data:www-data /var/www/html/laravelapp
+        sudo chmod -R 775 /var/www/html/laravelapp/storage
+note: Feel free to replace laravelapp with a preferred directory name.
+4. Once the installation is done navigate to the installation directory and check the Laravel version.
+        cd laravelapp
+5. Run the command to ckeck the installed version of laravel(make sure you are in the laravelapp directory).
+        php artisan --version
+* Configure Apache to serve Laravel site:
+ - Lastly, we need to set up the Apache webserver to host the Laravel site. For that to happen, we need to create a virtual host file.
+        cd     :This command is use to come back into home directory.
+        sudo nano /etc/apache2/sites-available/laravel.conf
+
+- Next, paste the content shown and replace the ServerName directive(example.com) with the public IP of the server.
+
+<VirtualHost *:80>
+ServerName example.com
+ServerAdmin admin@example.com
+DocumentRoot /var/www/html/laravelapp/public
+<Directory /var/www/html/laravelapp>
+AllowOverride All
+</Directory>
+ErrorLog ${APACHE_LOG_DIR}/error.log
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+- Save the changes and exit the file. Next, enable the Laravel site and Apache rewrite module using these two commands.
+
+        sudo a2ensite laravel.conf
+        sudo a2enmod rewrite
+
+- To apply the changes, restart Apache.
+        sudo systemctl restart apache2
+        sudo systemctl reload apache2
+* To access Laravel from a browser:
+Finally, to access Laravel visit your server's public IP address. The default Laravel webpage will be displayed.
